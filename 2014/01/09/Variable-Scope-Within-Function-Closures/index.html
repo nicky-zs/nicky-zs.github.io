@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>闭包作用域与调用环境问题 | Nicky&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="之前做相册的后台监控系统，在编写前端ajax请求数据批量更新界面的代码时，遇到了在循环体中构造闭包的一个常见问题。现记录如下。 系统中的case抽象出来就是这样一个问题：定义一个函数，这个函数返回一个长度为4的函数数组，且第i个函数的调用结果是在屏幕上打印数字i。 初步一想，这个问题很简单，代码如下： function echo_funcs() {   var funcs = [];    for">
+<meta name="keywords" content="Erlang,Python,Closure,JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="闭包作用域与调用环境问题">
+<meta property="og:url" content="https://nicky-zs.github.io/2014/01/09/Variable-Scope-Within-Function-Closures/index.html">
+<meta property="og:site_name" content="Nicky&#39;s Blog">
+<meta property="og:description" content="之前做相册的后台监控系统，在编写前端ajax请求数据批量更新界面的代码时，遇到了在循环体中构造闭包的一个常见问题。现记录如下。 系统中的case抽象出来就是这样一个问题：定义一个函数，这个函数返回一个长度为4的函数数组，且第i个函数的调用结果是在屏幕上打印数字i。 初步一想，这个问题很简单，代码如下： function echo_funcs() {   var funcs = [];    for">
+<meta property="og:updated_time" content="2017-08-09T12:08:48.364Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="闭包作用域与调用环境问题">
+<meta name="twitter:description" content="之前做相册的后台监控系统，在编写前端ajax请求数据批量更新界面的代码时，遇到了在循环体中构造闭包的一个常见问题。现记录如下。 系统中的case抽象出来就是这样一个问题：定义一个函数，这个函数返回一个长度为4的函数数组，且第i个函数的调用结果是在屏幕上打印数字i。 初步一想，这个问题很简单，代码如下： function echo_funcs() {   var funcs = [];    for">
+  
+    <link rel="alternate" href="/atom.xml" title="Nicky&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-81491830-2', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Nicky&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://nicky-zs.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Variable-Scope-Within-Function-Closures" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/01/09/Variable-Scope-Within-Function-Closures/" class="article-date">
+  <time datetime="2014-01-09T11:47:56.000Z" itemprop="datePublished">2014-01-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      闭包作用域与调用环境问题
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>之前做相册的后台监控系统，在编写前端ajax请求数据批量更新界面的代码时，遇到了在循环体中构造闭包的一个常见问题。现记录如下。</p>
+<p>系统中的case抽象出来就是这样一个问题：定义一个函数，这个函数返回一个长度为4的函数数组，且第i个函数的调用结果是在屏幕上打印数字i。</p>
+<p>初步一想，这个问题很简单，代码如下：</p>
+<pre><code class="javascript">function echo_funcs() {
+  var funcs = []; 
+  for (var i = 1; i &lt; 5; ++i) {
+    function echo_func() {
+      console.log(i);      // 第i个函数打印i
+    }   
+    funcs.push(echo_func);
+  }
+  return funcs;
+}
+
+var funcs = echo_funcs();
+for (var i in funcs) {
+  funcs[i]();
+}
+</code></pre>
+<p>用node.js执行这段代码，结果是：</p>
+<pre><code class="bash">5
+5
+5
+5
+</code></pre>
+<a id="more"></a>
+<p>很明显，结果跟预期不一样。究其原因，其实是与这种解释型语言的词法作用域有关。在javascript中，函数执行时的局部变量上下文环境，并不是使用类似x86架构上的栈式内存来管理的，而是使用函数作用域链来管理的。函数的作用域链在函数定义时就被确定下来，它包含了函数体本身所确定的作用域，以及该函数体外围的作用域。而在函数执行时，javascript引擎会为它创建一个新的作用域对象来保存它的局部变量，并将这个对象加入到它的作用域链中。当函数调用完成之后，该对象会被删除。如果这时没有其他对象引用该对象，那么这个对象就会被回收，就像C语言的函数调用一样。但如果这个函数的嵌套了另一个函数，则在函数调用完成之后，内部的嵌套函数还能够访问到外围函数的作用域对象，那么这个作用域对象就不会被回收，这就构成了所谓的函数闭包。</p>
+<p>然而，在<code>echo_funcs</code>函数中，虽然在循环体中产生的4个内部函数都能访问到<code>echo_funcs</code>的局部变量i，但是他们在运行时通过作用域链访问到的其实是同一个i。这个局部变量i在<code>echo_funcs</code>函数调用结束时就已经由for循环赋值成了5，因此，<code>echo_funcs()</code>所返回的4个函数，打印出来的i则都是5了。</p>
+<p>如果要得到正确的结果，则必须要对代码进行改动，使4个嵌套函数不要引用到同一个外围变量。由于嵌套函数几乎总是使用变量名来引用外围变量，因此除了函数调用时的复制传参，几乎没有别的办法。通过在具体的打印函数外围再嵌套一层函数，使得每一个打印函数都能够引用到属于自己的独立的外层作用域对象：</p>
+<pre><code class="javascript">function echo_funcs() {
+  var funcs = []; 
+  for (var i = 1; i &lt; 5; ++i) {
+    function echo_func(number) {
+      return function() {
+        console.log(number);
+      }   
+    }   
+    funcs.push(echo_func(i));
+  }
+  return funcs;
+}
+
+var funcs = echo_funcs();
+for (var i in funcs) {
+  funcs[i]();
+}
+</code></pre>
+<p>通过<code>echo_func</code>函数的参数number，使得4个嵌套函数引用的不是同一个变量，这时的打印结果是：</p>
+<pre><code class="bash">1
+2
+3
+4
+</code></pre>
+<p>符合预期了。</p>
+<p>这样的情况同样适用于python。错误的python代码是：</p>
+<pre><code class="python">def echo_funcs():
+    funcs = []
+    for i in range(1, 5): 
+        def echo_func():
+            print i
+        funcs.append(echo_func)
+    return funcs
+
+for func in echo_funcs():
+    func()
+</code></pre>
+<p>而正确的代码应该是：</p>
+<pre><code class="python">def echo_funcs():
+    funcs = []
+    for i in range(1, 5): 
+        def echo_func(number):
+            def _():
+                print number
+            return _
+        funcs.append(echo_func(i))
+    return funcs
+
+for func in echo_funcs():
+    func()
+</code></pre>
+<p>相比之下，纯粹的函数式语言Erlang构造闭包时要方便得多：</p>
+<pre><code class="erlang">-module(closure).
+-export([init/0]).
+
+echo_funcs() -&gt; [fun()-&gt;io:format(&quot;~p~n&quot;, [X]) end || X &lt;- lists:seq(1, 4)].
+init() -&gt; [Fun() || Fun &lt;- echo_funcs()].
+</code></pre>
+<p>Erlang函数的工作方式不同于javascript或者python，Erlang的函数在调用时，会有一个保存调用环境的对象绑定到函数的最后一个参数（隐含）上。当然Erlang中是没有变量的，所有的绑定都是一次性的，因而这个环境不会再改变。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://nicky-zs.github.io/2014/01/09/Variable-Scope-Within-Function-Closures/" data-id="cj651tp8v000qzsuy5k4tmdii" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Closure/">Closure</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Erlang/">Erlang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2014/01/09/Library-Path-Of-Some-Languages/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          各种语言的库查找
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/01/09/Bash-pro-programming-Condition-And-Loop/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Bash高级编程：分支和循环</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ASM/">ASM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bash/">Bash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Church-Numbers/">Church Numbers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Closure/">Closure</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Erlang/">Erlang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GRASP/">GRASP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTPS/">HTTPS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/High-Throughput/">High Throughput</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JSON/">JSON</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Node-js/">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OOD/">OOD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenSSL/">OpenSSL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PhoneGap/">PhoneGap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scheme/">Scheme</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/">Shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP/">TCP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TLS-SSL/">TLS/SSL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network-bridge/">network bridge</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network-namespace/">network namespace</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/veth/">veth</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wxWidgets/">wxWidgets</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ASM/" style="font-size: 10px;">ASM</a> <a href="/tags/Bash/" style="font-size: 20px;">Bash</a> <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Church-Numbers/" style="font-size: 10px;">Church Numbers</a> <a href="/tags/Closure/" style="font-size: 10px;">Closure</a> <a href="/tags/Erlang/" style="font-size: 15px;">Erlang</a> <a href="/tags/GRASP/" style="font-size: 10px;">GRASP</a> <a href="/tags/Golang/" style="font-size: 10px;">Golang</a> <a href="/tags/HTTPS/" style="font-size: 10px;">HTTPS</a> <a href="/tags/High-Throughput/" style="font-size: 10px;">High Throughput</a> <a href="/tags/JSON/" style="font-size: 10px;">JSON</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="/tags/OOD/" style="font-size: 10px;">OOD</a> <a href="/tags/OpenSSL/" style="font-size: 10px;">OpenSSL</a> <a href="/tags/PhoneGap/" style="font-size: 10px;">PhoneGap</a> <a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/Scheme/" style="font-size: 10px;">Scheme</a> <a href="/tags/Shell/" style="font-size: 10px;">Shell</a> <a href="/tags/TCP/" style="font-size: 10px;">TCP</a> <a href="/tags/TLS-SSL/" style="font-size: 10px;">TLS/SSL</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/network-bridge/" style="font-size: 10px;">network bridge</a> <a href="/tags/network-namespace/" style="font-size: 10px;">network namespace</a> <a href="/tags/veth/" style="font-size: 10px;">veth</a> <a href="/tags/wxWidgets/" style="font-size: 10px;">wxWidgets</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04/">April 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/02/">February 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">January 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2014/06/09/HTTPS-and-OpenSSL/">HTTPS and OpenSSL</a>
+          </li>
+        
+          <li>
+            <a href="/2014/06/09/Format-JSON-with-Python/">Format JSON with Python</a>
+          </li>
+        
+          <li>
+            <a href="/2014/04/09/Implement-Single-Host-Multiple-IPs-on-Linux/">Implement Single-Host-Multiple-IPs on Linux</a>
+          </li>
+        
+          <li>
+            <a href="/2014/04/09/High-Throughput-TCP-Server/">High Throughput TCP Server</a>
+          </li>
+        
+          <li>
+            <a href="/2014/02/09/PhoneGap/">iOS上PhoneGap与平台互操作</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Zhong Sheng<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<!--
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+<script src="//code.jquery.com/jquery-2.2.4.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

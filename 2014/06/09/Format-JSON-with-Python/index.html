@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Format JSON with Python | Nicky&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="现在以json为数据传输格式的RESTful接口非常流行。为调试这样的接口，一个常用的办法是使用curl命令： curl http://somehost.com/some-restful-api  对于返回的json字符串，一般在服务端不加处理的情况下，都是没有任何’\t’和’\n’的。为了方便查看，在bash上可以简单地对它进行格式化： curl http://somehost.com/some">
+<meta name="keywords" content="JSON,Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Format JSON with Python">
+<meta property="og:url" content="https://nicky-zs.github.io/2014/06/09/Format-JSON-with-Python/index.html">
+<meta property="og:site_name" content="Nicky&#39;s Blog">
+<meta property="og:description" content="现在以json为数据传输格式的RESTful接口非常流行。为调试这样的接口，一个常用的办法是使用curl命令： curl http://somehost.com/some-restful-api  对于返回的json字符串，一般在服务端不加处理的情况下，都是没有任何’\t’和’\n’的。为了方便查看，在bash上可以简单地对它进行格式化： curl http://somehost.com/some">
+<meta property="og:updated_time" content="2017-08-09T13:10:49.664Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Format JSON with Python">
+<meta name="twitter:description" content="现在以json为数据传输格式的RESTful接口非常流行。为调试这样的接口，一个常用的办法是使用curl命令： curl http://somehost.com/some-restful-api  对于返回的json字符串，一般在服务端不加处理的情况下，都是没有任何’\t’和’\n’的。为了方便查看，在bash上可以简单地对它进行格式化： curl http://somehost.com/some">
+  
+    <link rel="alternate" href="/atom.xml" title="Nicky&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-81491830-2', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Nicky&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://nicky-zs.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Format-JSON-with-Python" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/06/09/Format-JSON-with-Python/" class="article-date">
+  <time datetime="2014-06-09T13:07:23.000Z" itemprop="datePublished">2014-06-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Format JSON with Python
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>现在以json为数据传输格式的RESTful接口非常流行。为调试这样的接口，一个常用的办法是使用curl命令：</p>
+<pre><code class="bash">curl http://somehost.com/some-restful-api
+</code></pre>
+<p>对于返回的json字符串，一般在服务端不加处理的情况下，都是没有任何’\t’和’\n’的。为了方便查看，在bash上可以简单地对它进行格式化：</p>
+<pre><code class="bash">curl http://somehost.com/some-restful-api | python -mjson.tool
+</code></pre>
+<p>当然这要求机器上安装了python，其实也就是利用了json.tool这个程序。</p>
+<p>然而有时候还有一个问题，就是若返回的json字符串中包含中文，那么这样打印出来之后，中文会变成以’\u’开头的转义形式，从而让程序员无法直接观察到中文的内容。这并非是一个bug，而是json本身的标准，它要求json的内容都是ascii编码的。标准的json编码器和解码器都会遵循这一点。</p>
+<a id="more"></a>
+<p>解决这个问题的办法是编辑json.tool程序，该程序存在于python系统库安装路径下的json/tool.py。在main方法的最后，将：</p>
+<pre><code class="bash">json.dump(obj, outfile, sort_keys=True, indent=4)
+</code></pre>
+<p>修改为：</p>
+<pre><code class="bash">json.dump(obj, outfile, sort_keys=True, indent=4, ensure_ascii=False)
+</code></pre>
+<p>即让json.tool程序不强行保证json的内容都转义为ascii编码。修改后，再次运行</p>
+<pre><code class="bash">curl http://somehost.com/some-restful-api | python -mjson.tool
+</code></pre>
+<p>打印的结果即可正常包含中文。</p>
+<p>不过这样还是会有问题，当返回的json字符串中包含了一些类似emoji表情这种无法正常编码的字符时，将结果打印到bash没问题，但是一旦打印到less或者文件上，则会提示编码错误：</p>
+<pre><code class="bash">UnicodeEncodeError: &#39;ascii&#39; codec can&#39;t encode characters in position 1-2: ordinal not in range(128)
+</code></pre>
+<p>解决办法，手动在json.tool程序中编码。在json/tool.py的最后，修改为（需提前import codecs）：</p>
+<pre><code class="bash">s = json.dumps(obj, sort_keys=True, indent=4, ensure_ascii=False)
+outfile.write(codecs.encode(s, &#39;utf-8&#39;))
+</code></pre>
+<p>这样就可以了。</p>
+<p>gist: <a href="https://gist.github.com/nicky-zs/6af8a1afc771ad76d463" target="_blank" rel="external">https://gist.github.com/nicky-zs/6af8a1afc771ad76d463</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://nicky-zs.github.io/2014/06/09/Format-JSON-with-Python/" data-id="cj651tp8j000fzsuyo6u7juiz" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JSON/">JSON</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2014/06/09/HTTPS-and-OpenSSL/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          HTTPS and OpenSSL
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/04/09/Implement-Single-Host-Multiple-IPs-on-Linux/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Implement Single-Host-Multiple-IPs on Linux</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ASM/">ASM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bash/">Bash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Church-Numbers/">Church Numbers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Closure/">Closure</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Erlang/">Erlang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GRASP/">GRASP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTPS/">HTTPS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/High-Throughput/">High Throughput</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JSON/">JSON</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Node-js/">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OOD/">OOD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenSSL/">OpenSSL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PhoneGap/">PhoneGap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scheme/">Scheme</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/">Shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP/">TCP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TLS-SSL/">TLS/SSL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network-bridge/">network bridge</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network-namespace/">network namespace</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/veth/">veth</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wxWidgets/">wxWidgets</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ASM/" style="font-size: 10px;">ASM</a> <a href="/tags/Bash/" style="font-size: 20px;">Bash</a> <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Church-Numbers/" style="font-size: 10px;">Church Numbers</a> <a href="/tags/Closure/" style="font-size: 10px;">Closure</a> <a href="/tags/Erlang/" style="font-size: 15px;">Erlang</a> <a href="/tags/GRASP/" style="font-size: 10px;">GRASP</a> <a href="/tags/Golang/" style="font-size: 10px;">Golang</a> <a href="/tags/HTTPS/" style="font-size: 10px;">HTTPS</a> <a href="/tags/High-Throughput/" style="font-size: 10px;">High Throughput</a> <a href="/tags/JSON/" style="font-size: 10px;">JSON</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="/tags/OOD/" style="font-size: 10px;">OOD</a> <a href="/tags/OpenSSL/" style="font-size: 10px;">OpenSSL</a> <a href="/tags/PhoneGap/" style="font-size: 10px;">PhoneGap</a> <a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/Scheme/" style="font-size: 10px;">Scheme</a> <a href="/tags/Shell/" style="font-size: 10px;">Shell</a> <a href="/tags/TCP/" style="font-size: 10px;">TCP</a> <a href="/tags/TLS-SSL/" style="font-size: 10px;">TLS/SSL</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/network-bridge/" style="font-size: 10px;">network bridge</a> <a href="/tags/network-namespace/" style="font-size: 10px;">network namespace</a> <a href="/tags/veth/" style="font-size: 10px;">veth</a> <a href="/tags/wxWidgets/" style="font-size: 10px;">wxWidgets</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04/">April 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/02/">February 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">January 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2014/06/09/HTTPS-and-OpenSSL/">HTTPS and OpenSSL</a>
+          </li>
+        
+          <li>
+            <a href="/2014/06/09/Format-JSON-with-Python/">Format JSON with Python</a>
+          </li>
+        
+          <li>
+            <a href="/2014/04/09/Implement-Single-Host-Multiple-IPs-on-Linux/">Implement Single-Host-Multiple-IPs on Linux</a>
+          </li>
+        
+          <li>
+            <a href="/2014/04/09/High-Throughput-TCP-Server/">High Throughput TCP Server</a>
+          </li>
+        
+          <li>
+            <a href="/2014/02/09/PhoneGap/">iOS上PhoneGap与平台互操作</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Zhong Sheng<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<!--
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+<script src="//code.jquery.com/jquery-2.2.4.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

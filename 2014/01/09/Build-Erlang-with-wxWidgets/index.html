@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Build Erlang with wxWidgets | Nicky&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在erlang.org上下载erlang的源代码。解压erlang源代码，进入源代码目录中。  执行   ./configure  --enable-threads --enable-smp-support --enable-kernel-poll \      --enable-sctp --enable-hipe --enable-native-libs &amp;amp;&amp;amp; make &amp;a">
+<meta name="keywords" content="Erlang,wxWidgets">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Build Erlang with wxWidgets">
+<meta property="og:url" content="https://nicky-zs.github.io/2014/01/09/Build-Erlang-with-wxWidgets/index.html">
+<meta property="og:site_name" content="Nicky&#39;s Blog">
+<meta property="og:description" content="在erlang.org上下载erlang的源代码。解压erlang源代码，进入源代码目录中。  执行   ./configure  --enable-threads --enable-smp-support --enable-kernel-poll \      --enable-sctp --enable-hipe --enable-native-libs &amp;amp;&amp;amp; make &amp;a">
+<meta property="og:updated_time" content="2017-08-09T12:37:13.536Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Build Erlang with wxWidgets">
+<meta name="twitter:description" content="在erlang.org上下载erlang的源代码。解压erlang源代码，进入源代码目录中。  执行   ./configure  --enable-threads --enable-smp-support --enable-kernel-poll \      --enable-sctp --enable-hipe --enable-native-libs &amp;amp;&amp;amp; make &amp;a">
+  
+    <link rel="alternate" href="/atom.xml" title="Nicky&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-81491830-2', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Nicky&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://nicky-zs.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Build-Erlang-with-wxWidgets" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/01/09/Build-Erlang-with-wxWidgets/" class="article-date">
+  <time datetime="2014-01-09T12:28:05.000Z" itemprop="datePublished">2014-01-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Build Erlang with wxWidgets
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <ol>
+<li><p>在erlang.org上下载erlang的源代码。解压erlang源代码，进入源代码目录中。</p>
+</li>
+<li><p>执行</p>
+</li>
+</ol>
+<pre><code class="bash">./configure  --enable-threads --enable-smp-support --enable-kernel-poll \
+     --enable-sctp --enable-hipe --enable-native-libs &amp;&amp; make &amp;&amp; sudo make install
+</code></pre>
+<p>./configure的结果会提示有哪些依赖未找到，因而相应的功能不可用。在所有这些依赖中，其他的依赖都好解决，直接安装依赖库就好了。但是唯独wxWidgets的依赖很难解决，即便安装了wxWidgets后都不一定能解决。这时需要一步一步去寻找原因。</p>
+<p>首先，wxWidgets从源代码编译安装的方式在erlang的源代码目录下的./lib/wx/README文件中有详细的描述：</p>
+<pre><code class="bash">./configure --with-opengl --enable-unicode --enable-graphics_ctx \
+      --disable-shared &amp;&amp; make &amp;&amp; sudo make install
+cd contrib/src/stc &amp;&amp; make &amp;&amp; sudo make install
+</code></pre>
+<a id="more"></a>
+<p>但是即使按这种方式编译安装了wxWidgets，问题还是依然存在，于是只能从erlang的configure过程中去寻找原因：</p>
+<ol>
+<li><p>在configure文件中，找出判断wxWidgets不可用的地方。根据打印出来的错误语句，找到了lib/wx/configure文件中的<code>CAN_LINK_WX</code>变量，该变量被赋值为no，即被判定为无法链接wxWidgets。</p>
+</li>
+<li><p>继续寻找<code>CAN_LINK_WX</code>被赋值为no的地方，原来发现在lib/wx/configure的6760行前后，有一个if语句专门用来测试与wxWidgets的链接，该测试通过<code>eval $ac_link</code>来完成。</p>
+</li>
+<li><p>通过打印<code>$ac_link</code>以及该字符串中<code>$CXXFLAGS</code>、<code>$CPPFLAGS</code>、<code>$LDFLAGS</code>、<code>$LIBS</code>等变量，可以得到用于测试与wxWidgets链接的gcc参数。将测试文件<code>conftest.$ac_ext</code>拷贝到某个目录比如~/下，然后进入~/目录，使用刚刚得到的参数来重新编译该文件，提示</p>
+<pre><code class="bash">relocation R_X86_64_32 against `wxStyledTextCtrl::sm_eventTable&#39; can not be used when making a shared object; recompile with -fPIC
+/usr/local/lib/libwx_gtk2u_stc-3.0.a: could not read symbols: Bad value
+</code></pre>
+<p>于是发现是由于wxWidgets的静态库在编译时未生成地址无关的可重定位代码，导致无法生成动态链接库文件。</p>
+</li>
+<li><p>重新进入到wxWidgets源代码目录下，给./Makefile以及./contrib/src/stc/Makefile中的<code>CXXFLAGS</code>加上<code>-fPIC -DPIC</code>参数，然后重新编译安装wxWidgets和wxWidgets/stc，然后问题得以解决。</p>
+</li>
+</ol>
+<p>好吧，这里还有个小插曲是wxWidgets-2.8.12的一个bug，即它在./configure的时候找不到系统中已经安装的openGL库，解决办法是在它的configure文件中，修改一下<code>SEARCH_LIB</code>的值：</p>
+<pre><code class="bash">SEARCH_LIB=&quot;$SEARCH_LIB `pkg-config --variable=libdir gl`&quot;
+</code></pre>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://nicky-zs.github.io/2014/01/09/Build-Erlang-with-wxWidgets/" data-id="cj651tp830005zsuyxhbwtu3r" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Erlang/">Erlang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/wxWidgets/">wxWidgets</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2014/02/09/Church-Numbers/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          邱奇数前趋操作的推导
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/01/09/Library-Path-Of-Some-Languages/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">各种语言的库查找</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ASM/">ASM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bash/">Bash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Church-Numbers/">Church Numbers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Closure/">Closure</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Erlang/">Erlang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GRASP/">GRASP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTPS/">HTTPS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/High-Throughput/">High Throughput</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JSON/">JSON</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Node-js/">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OOD/">OOD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenSSL/">OpenSSL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PhoneGap/">PhoneGap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scheme/">Scheme</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/">Shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP/">TCP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TLS-SSL/">TLS/SSL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network-bridge/">network bridge</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network-namespace/">network namespace</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/veth/">veth</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wxWidgets/">wxWidgets</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ASM/" style="font-size: 10px;">ASM</a> <a href="/tags/Bash/" style="font-size: 20px;">Bash</a> <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Church-Numbers/" style="font-size: 10px;">Church Numbers</a> <a href="/tags/Closure/" style="font-size: 10px;">Closure</a> <a href="/tags/Erlang/" style="font-size: 15px;">Erlang</a> <a href="/tags/GRASP/" style="font-size: 10px;">GRASP</a> <a href="/tags/Golang/" style="font-size: 10px;">Golang</a> <a href="/tags/HTTPS/" style="font-size: 10px;">HTTPS</a> <a href="/tags/High-Throughput/" style="font-size: 10px;">High Throughput</a> <a href="/tags/JSON/" style="font-size: 10px;">JSON</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="/tags/OOD/" style="font-size: 10px;">OOD</a> <a href="/tags/OpenSSL/" style="font-size: 10px;">OpenSSL</a> <a href="/tags/PhoneGap/" style="font-size: 10px;">PhoneGap</a> <a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/Scheme/" style="font-size: 10px;">Scheme</a> <a href="/tags/Shell/" style="font-size: 10px;">Shell</a> <a href="/tags/TCP/" style="font-size: 10px;">TCP</a> <a href="/tags/TLS-SSL/" style="font-size: 10px;">TLS/SSL</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/network-bridge/" style="font-size: 10px;">network bridge</a> <a href="/tags/network-namespace/" style="font-size: 10px;">network namespace</a> <a href="/tags/veth/" style="font-size: 10px;">veth</a> <a href="/tags/wxWidgets/" style="font-size: 10px;">wxWidgets</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04/">April 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/02/">February 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">January 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2014/06/09/HTTPS-and-OpenSSL/">HTTPS and OpenSSL</a>
+          </li>
+        
+          <li>
+            <a href="/2014/06/09/Format-JSON-with-Python/">Format JSON with Python</a>
+          </li>
+        
+          <li>
+            <a href="/2014/04/09/Implement-Single-Host-Multiple-IPs-on-Linux/">Implement Single-Host-Multiple-IPs on Linux</a>
+          </li>
+        
+          <li>
+            <a href="/2014/04/09/High-Throughput-TCP-Server/">High Throughput TCP Server</a>
+          </li>
+        
+          <li>
+            <a href="/2014/02/09/PhoneGap/">iOS上PhoneGap与平台互操作</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Zhong Sheng<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<!--
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+<script src="//code.jquery.com/jquery-2.2.4.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

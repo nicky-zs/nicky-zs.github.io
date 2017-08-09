@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Bash高级编程：分支和循环 | Nicky&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="list一个list是指一个或多个命令的序列，它们以分号、&amp;amp;符号、控制操作符、换行来分隔，且最后一条命令的退出码就是整个list的退出码。list可以用于if, while, until等分支循环语句的条件或者执行体。 一、ifif语句的形式为： if &amp;lt;condition list&amp;gt; then     &amp;lt;list&amp;gt; fi # 或者 if &amp;lt;condition">
+<meta name="keywords" content="Bash">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bash高级编程：分支和循环">
+<meta property="og:url" content="https://nicky-zs.github.io/2014/01/09/Bash-pro-programming-Condition-And-Loop/index.html">
+<meta property="og:site_name" content="Nicky&#39;s Blog">
+<meta property="og:description" content="list一个list是指一个或多个命令的序列，它们以分号、&amp;amp;符号、控制操作符、换行来分隔，且最后一条命令的退出码就是整个list的退出码。list可以用于if, while, until等分支循环语句的条件或者执行体。 一、ifif语句的形式为： if &amp;lt;condition list&amp;gt; then     &amp;lt;list&amp;gt; fi # 或者 if &amp;lt;condition">
+<meta property="og:updated_time" content="2017-08-09T12:07:52.898Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Bash高级编程：分支和循环">
+<meta name="twitter:description" content="list一个list是指一个或多个命令的序列，它们以分号、&amp;amp;符号、控制操作符、换行来分隔，且最后一条命令的退出码就是整个list的退出码。list可以用于if, while, until等分支循环语句的条件或者执行体。 一、ifif语句的形式为： if &amp;lt;condition list&amp;gt; then     &amp;lt;list&amp;gt; fi # 或者 if &amp;lt;condition">
+  
+    <link rel="alternate" href="/atom.xml" title="Nicky&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-81491830-2', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Nicky&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://nicky-zs.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Bash-pro-programming-Condition-And-Loop" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/01/09/Bash-pro-programming-Condition-And-Loop/" class="article-date">
+  <time datetime="2014-01-09T11:37:37.000Z" itemprop="datePublished">2014-01-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Bash高级编程：分支和循环
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="list"><a href="#list" class="headerlink" title="list"></a>list</h2><p>一个list是指一个或多个命令的序列，它们以分号、<code>&amp;</code>符号、控制操作符、换行来分隔，且最后一条命令的退出码就是整个list的退出码。list可以用于<code>if</code>, <code>while</code>, <code>until</code>等分支循环语句的条件或者执行体。</p>
+<h2 id="一、if"><a href="#一、if" class="headerlink" title="一、if"></a>一、<code>if</code></h2><p><code>if</code>语句的形式为：</p>
+<pre><code class="bash">if &lt;condition list&gt;
+then
+    &lt;list&gt;
+fi
+# 或者
+if &lt;condition list&gt;; then &lt;list&gt;; fi
+</code></pre>
+<a id="more"></a>
+<p>首先，<code>&lt;condition list&gt;</code>会被执行并得到退出码。退出码为0则认为是真，退出码不为0则认为是假。若为真，则执行<code>then</code>后面的<code>&lt;list&gt;</code>，否则直接退出。<code>if</code>语句也支持<code>else</code>或者<code>elif</code>:</p>
+<pre><code class="bash">if &lt;condition list&gt;
+then
+    &lt;list1&gt;
+else
+    &lt;list2&gt;
+fi
+# 或者
+if &lt;condition list&gt;; then &lt;list1&gt;; else &lt;list2&gt;; fi
+</code></pre>
+<pre><code class="bash">if &lt;condition list1&gt;
+then
+    &lt;list1&gt;
+elif &lt;condition list2&gt;
+then
+    &lt;list2&gt;
+else
+    &lt;list3&gt;
+fi
+# 或者
+if &lt;condition list1&gt;; then &lt;list1&gt;; elif &lt;condition list2&gt;; then &lt;list2&gt;; else &lt;list2&gt;; fi
+</code></pre>
+<h2 id="二、控制操作符"><a href="#二、控制操作符" class="headerlink" title="二、控制操作符"></a>二、控制操作符</h2><p>控制操作符包含<code>&amp;&amp;</code>和<code>||</code>，分别表示逻辑与和逻辑或。它们有短路特性。</p>
+<pre><code class="bash">command1 &amp;&amp; command2 || command3   # command1执行成功则执行command2，否则执行command3
+</code></pre>
+<h2 id="三、case"><a href="#三、case" class="headerlink" title="三、case"></a>三、<code>case</code></h2><p><code>case</code>语句会找到与条件匹配的子句然后执行：</p>
+<pre><code class="bash">case WORD in
+  PATTERN1)
+    &lt;list1&gt;
+    ;;             # break
+  PATTERN2)
+    &lt;list2&gt;
+    ;;
+  *)
+    &lt;default&gt;
+    ;;
+esac
+</code></pre>
+<p>其中，每一个<code>PATTERN</code>都是类似于路径扩展的包含<code>*</code>和<code>?</code>以及<code>[x1-x2]</code>范围的表达式。</p>
+<h2 id="四、while"><a href="#四、while" class="headerlink" title="四、while"></a>四、<code>while</code></h2><pre><code class="bash">while &lt;condition list&gt;
+do
+    &lt;list&gt;
+done
+
+# 或者
+while &lt;condition list&gt;; do &lt;list&gt;; done
+</code></pre>
+<h2 id="五、until"><a href="#五、until" class="headerlink" title="五、until"></a>五、<code>until</code></h2><p>与<code>while</code>相比，<code>until</code>循环用得不是很多：</p>
+<pre><code class="bash">until &lt;condition list&gt;
+do
+    &lt;list&gt;
+done
+
+# 或者
+until &lt;condition list&gt;; do &lt;list&gt;; done
+</code></pre>
+<h2 id="六、for"><a href="#六、for" class="headerlink" title="六、for"></a>六、<code>for</code></h2><p><code>for</code>主要用于遍历列表：</p>
+<pre><code class="bash">for var in A B C D E
+do
+    echo $var
+done
+
+# 或者
+for var in A B C D E; do echo $var; done
+
+# 处理数组
+for var in &quot;${array[@]}&quot;
+do
+    echo $var
+done
+
+# 遍历脚本参数
+for option  # 等价于 for option in &quot;$@&quot;
+do
+    echo $option
+done
+</code></pre>
+<h2 id="相关：break-continue-test-true-false"><a href="#相关：break-continue-test-true-false" class="headerlink" title="相关：break, continue, test, [, [[, :, true, false"></a>相关：<code>break</code>, <code>continue</code>, <code>test</code>, <code>[</code>, <code>[[</code>, <code>:</code>, <code>true</code>, <code>false</code></h2><p><code>break</code>: 跳出当前的循环</p>
+<p><code>continue</code>: 中止这一轮循环，进入下一轮循环</p>
+<p><code>test</code>: 对文件及变量进行一些检测。</p>
+<p><code>[</code>: 与<code>test</code>是一样的，除了<code>[</code>命令一定要有一个对应的<code>]</code>符号作为最后一个参数。注：<code>[</code>后面一定要有空格，否则它不会被看作单独的一个命令。</p>
+<p><code>[[</code>: 与<code>[</code>类似，也用于进行一些测试，但是提供了更多支持，包括可以直接使用<code>&lt;</code>,<code>&gt;</code>等运算符进行算术比较，以及使用<code>=~</code>进行正则匹配。当它进行正则匹配时，匹配结果会存放在<code>BASH_REMATCH</code>数组变量中。</p>
+<p><code>true</code>: 该命令永远成功，所有参数都会被忽略。冒号<code>:</code>命令与<code>true</code>等价。</p>
+<p><code>false</code>: 该命令永远失败，所有的参数都会被忽略。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://nicky-zs.github.io/2014/01/09/Bash-pro-programming-Condition-And-Loop/" data-id="cj651tp7s0001zsuy0u0hbno9" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Bash/">Bash</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2014/01/09/Variable-Scope-Within-Function-Closures/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          闭包作用域与调用环境问题
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/01/09/Bash-pro-programming-Variables/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Bash高级编程：变量</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ASM/">ASM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bash/">Bash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Church-Numbers/">Church Numbers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Closure/">Closure</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Erlang/">Erlang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GRASP/">GRASP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTPS/">HTTPS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/High-Throughput/">High Throughput</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JSON/">JSON</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Node-js/">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OOD/">OOD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenSSL/">OpenSSL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PhoneGap/">PhoneGap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scheme/">Scheme</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/">Shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP/">TCP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TLS-SSL/">TLS/SSL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network-bridge/">network bridge</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network-namespace/">network namespace</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/veth/">veth</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wxWidgets/">wxWidgets</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ASM/" style="font-size: 10px;">ASM</a> <a href="/tags/Bash/" style="font-size: 20px;">Bash</a> <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Church-Numbers/" style="font-size: 10px;">Church Numbers</a> <a href="/tags/Closure/" style="font-size: 10px;">Closure</a> <a href="/tags/Erlang/" style="font-size: 15px;">Erlang</a> <a href="/tags/GRASP/" style="font-size: 10px;">GRASP</a> <a href="/tags/Golang/" style="font-size: 10px;">Golang</a> <a href="/tags/HTTPS/" style="font-size: 10px;">HTTPS</a> <a href="/tags/High-Throughput/" style="font-size: 10px;">High Throughput</a> <a href="/tags/JSON/" style="font-size: 10px;">JSON</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="/tags/OOD/" style="font-size: 10px;">OOD</a> <a href="/tags/OpenSSL/" style="font-size: 10px;">OpenSSL</a> <a href="/tags/PhoneGap/" style="font-size: 10px;">PhoneGap</a> <a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/Scheme/" style="font-size: 10px;">Scheme</a> <a href="/tags/Shell/" style="font-size: 10px;">Shell</a> <a href="/tags/TCP/" style="font-size: 10px;">TCP</a> <a href="/tags/TLS-SSL/" style="font-size: 10px;">TLS/SSL</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/network-bridge/" style="font-size: 10px;">network bridge</a> <a href="/tags/network-namespace/" style="font-size: 10px;">network namespace</a> <a href="/tags/veth/" style="font-size: 10px;">veth</a> <a href="/tags/wxWidgets/" style="font-size: 10px;">wxWidgets</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04/">April 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/02/">February 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">January 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2014/06/09/HTTPS-and-OpenSSL/">HTTPS and OpenSSL</a>
+          </li>
+        
+          <li>
+            <a href="/2014/06/09/Format-JSON-with-Python/">Format JSON with Python</a>
+          </li>
+        
+          <li>
+            <a href="/2014/04/09/Implement-Single-Host-Multiple-IPs-on-Linux/">Implement Single-Host-Multiple-IPs on Linux</a>
+          </li>
+        
+          <li>
+            <a href="/2014/04/09/High-Throughput-TCP-Server/">High Throughput TCP Server</a>
+          </li>
+        
+          <li>
+            <a href="/2014/02/09/PhoneGap/">iOS上PhoneGap与平台互操作</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Zhong Sheng<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<!--
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+<script src="//code.jquery.com/jquery-2.2.4.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

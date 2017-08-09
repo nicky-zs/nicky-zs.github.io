@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>各种语言的库查找 | Nicky&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="ShellPATH用于指定Shell中命令查找的路径，若非主动添加，该路径是不包含当前路径的： PATH=. hello  LD_LIBRARY_PATH用于指定执行程序时动态链接库(ldd hello-with-so-in-pwd)的查找路径，否则Shell只找得到$(ldconfig -p)所示的动态库： LD_LIBRARY_PATH=. hello-with-so-in-pwd  C/C+">
+<meta name="keywords" content="Erlang,Python,Shell,C,C++,ASM,Java,Node.js,Golang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="各种语言的库查找">
+<meta property="og:url" content="https://nicky-zs.github.io/2014/01/09/Library-Path-Of-Some-Languages/index.html">
+<meta property="og:site_name" content="Nicky&#39;s Blog">
+<meta property="og:description" content="ShellPATH用于指定Shell中命令查找的路径，若非主动添加，该路径是不包含当前路径的： PATH=. hello  LD_LIBRARY_PATH用于指定执行程序时动态链接库(ldd hello-with-so-in-pwd)的查找路径，否则Shell只找得到$(ldconfig -p)所示的动态库： LD_LIBRARY_PATH=. hello-with-so-in-pwd  C/C+">
+<meta property="og:updated_time" content="2017-08-09T12:25:30.103Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="各种语言的库查找">
+<meta name="twitter:description" content="ShellPATH用于指定Shell中命令查找的路径，若非主动添加，该路径是不包含当前路径的： PATH=. hello  LD_LIBRARY_PATH用于指定执行程序时动态链接库(ldd hello-with-so-in-pwd)的查找路径，否则Shell只找得到$(ldconfig -p)所示的动态库： LD_LIBRARY_PATH=. hello-with-so-in-pwd  C/C+">
+  
+    <link rel="alternate" href="/atom.xml" title="Nicky&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-81491830-2', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Nicky&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://nicky-zs.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Library-Path-Of-Some-Languages" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/01/09/Library-Path-Of-Some-Languages/" class="article-date">
+  <time datetime="2014-01-09T12:14:33.000Z" itemprop="datePublished">2014-01-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      各种语言的库查找
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Shell"><a href="#Shell" class="headerlink" title="Shell"></a>Shell</h2><p><code>PATH</code>用于指定Shell中命令查找的路径，若非主动添加，该路径是不包含当前路径的：</p>
+<pre><code class="bash">PATH=. hello
+</code></pre>
+<p><code>LD_LIBRARY_PATH</code>用于指定执行程序时动态链接库(<code>ldd hello-with-so-in-pwd</code>)的查找路径，否则Shell只找得到<code>$(ldconfig -p)</code>所示的动态库：</p>
+<pre><code class="bash">LD_LIBRARY_PATH=. hello-with-so-in-pwd
+</code></pre>
+<h2 id="C-C"><a href="#C-C" class="headerlink" title="C/C++"></a>C/C++</h2><a id="more"></a>
+<p><code>CPATH</code>用于指定头文件查找路径，<code>LIBRARY_PATH</code>用于指定lib查找路径：</p>
+<pre><code class="bash">CPATH=xxx/include LIBRARY_PATH=xxx/lib gcc main.c -lxxx
+</code></pre>
+<p>不过一般还是直接使用gcc的参数来指定：</p>
+<pre><code class="bash">gcc -Ixxx/include -Lxxx/lib main.c -lxxx
+</code></pre>
+<h2 id="ASM"><a href="#ASM" class="headerlink" title="ASM"></a>ASM</h2><p>跟C差不多。<code>as</code>使用<code>-32</code>来指定32位平台，<code>ld</code>使用<code>-melf_i386</code>来指定。链接时还需要使用<code>-dynamic-linker /lib/ld-linux.so.x</code>或<code>-dynamic-linker /lib64/ld-linux-x86-64.so.x</code>选项。</p>
+<p>注意<code>int $0x80</code>永远会启动一个ia32的系统调用，要启动一个x86_64的系统调用要使用<code>syscall</code>指令，同时参数使用的寄存器约定也不一样。</p>
+<h2 id="Java"><a href="#Java" class="headerlink" title="Java"></a>Java</h2><p><code>CLASSPATH</code>用于指定Java的类查找路径：</p>
+<pre><code class="bash">CLASSPATH=xxx:. java xx.yy.CC
+</code></pre>
+<p>同样，也可以直接使用<code>java</code>的参数来指定，方便在<code>ps -ef</code>中直接找到classpath，而不用去<code>/proc</code>里找：</p>
+<pre><code class="bash">java -cp xxx:. xx.yy.CC
+# 或
+java -classpath xxx:. xx.yy.Cc
+</code></pre>
+<h2 id="Python"><a href="#Python" class="headerlink" title="Python"></a>Python</h2><p><code>PYTHONPATH</code>用于指定Python的模块所在的目录，该目录需要包含<strong>init</strong>.py文件以表明它是一个模块：</p>
+<pre><code class="bash">PYTHONPATH=/opt/pyapps/app1 python -m app.main
+</code></pre>
+<h2 id="Node-js"><a href="#Node-js" class="headerlink" title="Node.js"></a>Node.js</h2><p><code>NODE_PATH</code>用于指定Node.js的包所在的目录，当然nodejs还会去搜索该目录下的node_modules目录：</p>
+<pre><code class="bash">NODE_PATH=$(npm root -g) node thrift-server.js
+</code></pre>
+<h2 id="Erlang"><a href="#Erlang" class="headerlink" title="Erlang"></a>Erlang</h2><p>印象中没有这样的环境变量能影响Erlang的模块搜索路径，应该直接使用<code>-pa</code>或者<code>-pz</code>选项来完成：</p>
+<pre><code class="bash">erl -pa ./ebin -s main start -s init stop
+</code></pre>
+<p>当使用escript时，把<code>-pz</code>贴在代码里：</p>
+<pre><code class="erlang">%%! -pa ./ebin
+</code></pre>
+<p>当使用erlang shell时，还可以直接使用code模块：</p>
+<pre><code class="erlang">code:add_patha(&quot;./ebin&quot;)
+</code></pre>
+<h2 id="Go"><a href="#Go" class="headerlink" title="Go"></a>Go</h2><p>`GOPATH用于指定Go的包所在的目录(必须是绝对路径)，同时Go本身也还假设包xxx会存在于$GOPATH/pkg/xxx中：</p>
+<pre><code class="bash">GOPATH=$PWD go build main
+</code></pre>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://nicky-zs.github.io/2014/01/09/Library-Path-Of-Some-Languages/" data-id="cj651tp8r000mzsuyyo9u2fwf" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ASM/">ASM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/">C</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/">C++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Erlang/">Erlang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Golang/">Golang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Node-js/">Node.js</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Shell/">Shell</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2014/01/09/Build-Erlang-with-wxWidgets/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Build Erlang with wxWidgets
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/01/09/Variable-Scope-Within-Function-Closures/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">闭包作用域与调用环境问题</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ASM/">ASM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bash/">Bash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Church-Numbers/">Church Numbers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Closure/">Closure</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Erlang/">Erlang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GRASP/">GRASP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTPS/">HTTPS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/High-Throughput/">High Throughput</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JSON/">JSON</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Node-js/">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OOD/">OOD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenSSL/">OpenSSL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PhoneGap/">PhoneGap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scheme/">Scheme</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/">Shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP/">TCP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TLS-SSL/">TLS/SSL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network-bridge/">network bridge</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network-namespace/">network namespace</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/veth/">veth</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wxWidgets/">wxWidgets</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ASM/" style="font-size: 10px;">ASM</a> <a href="/tags/Bash/" style="font-size: 20px;">Bash</a> <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Church-Numbers/" style="font-size: 10px;">Church Numbers</a> <a href="/tags/Closure/" style="font-size: 10px;">Closure</a> <a href="/tags/Erlang/" style="font-size: 15px;">Erlang</a> <a href="/tags/GRASP/" style="font-size: 10px;">GRASP</a> <a href="/tags/Golang/" style="font-size: 10px;">Golang</a> <a href="/tags/HTTPS/" style="font-size: 10px;">HTTPS</a> <a href="/tags/High-Throughput/" style="font-size: 10px;">High Throughput</a> <a href="/tags/JSON/" style="font-size: 10px;">JSON</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="/tags/OOD/" style="font-size: 10px;">OOD</a> <a href="/tags/OpenSSL/" style="font-size: 10px;">OpenSSL</a> <a href="/tags/PhoneGap/" style="font-size: 10px;">PhoneGap</a> <a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/Scheme/" style="font-size: 10px;">Scheme</a> <a href="/tags/Shell/" style="font-size: 10px;">Shell</a> <a href="/tags/TCP/" style="font-size: 10px;">TCP</a> <a href="/tags/TLS-SSL/" style="font-size: 10px;">TLS/SSL</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/network-bridge/" style="font-size: 10px;">network bridge</a> <a href="/tags/network-namespace/" style="font-size: 10px;">network namespace</a> <a href="/tags/veth/" style="font-size: 10px;">veth</a> <a href="/tags/wxWidgets/" style="font-size: 10px;">wxWidgets</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04/">April 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/02/">February 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">January 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2014/06/09/HTTPS-and-OpenSSL/">HTTPS and OpenSSL</a>
+          </li>
+        
+          <li>
+            <a href="/2014/06/09/Format-JSON-with-Python/">Format JSON with Python</a>
+          </li>
+        
+          <li>
+            <a href="/2014/04/09/Implement-Single-Host-Multiple-IPs-on-Linux/">Implement Single-Host-Multiple-IPs on Linux</a>
+          </li>
+        
+          <li>
+            <a href="/2014/04/09/High-Throughput-TCP-Server/">High Throughput TCP Server</a>
+          </li>
+        
+          <li>
+            <a href="/2014/02/09/PhoneGap/">iOS上PhoneGap与平台互操作</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Zhong Sheng<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<!--
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+<script src="//code.jquery.com/jquery-2.2.4.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

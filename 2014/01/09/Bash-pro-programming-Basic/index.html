@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Bash高级编程：基础 | Nicky&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="一、脚本Bash脚本由Bash能够解释的命令组成。所有的注释以#开头直到该行结尾： echo abc          # 显示 abc echo abc;         # 每一行后面的分号是可选的 echo a; echo b    # 在这种情况下，第一个命令后的分号不可省 echo a &amp;amp;          # &amp;amp;和;都是行结束符，但&amp;amp;的意思是当前命令放到后台执行">
+<meta name="keywords" content="Bash">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bash高级编程：基础">
+<meta property="og:url" content="https://nicky-zs.github.io/2014/01/09/Bash-pro-programming-Basic/index.html">
+<meta property="og:site_name" content="Nicky&#39;s Blog">
+<meta property="og:description" content="一、脚本Bash脚本由Bash能够解释的命令组成。所有的注释以#开头直到该行结尾： echo abc          # 显示 abc echo abc;         # 每一行后面的分号是可选的 echo a; echo b    # 在这种情况下，第一个命令后的分号不可省 echo a &amp;amp;          # &amp;amp;和;都是行结束符，但&amp;amp;的意思是当前命令放到后台执行">
+<meta property="og:updated_time" content="2017-08-09T12:06:55.136Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Bash高级编程：基础">
+<meta name="twitter:description" content="一、脚本Bash脚本由Bash能够解释的命令组成。所有的注释以#开头直到该行结尾： echo abc          # 显示 abc echo abc;         # 每一行后面的分号是可选的 echo a; echo b    # 在这种情况下，第一个命令后的分号不可省 echo a &amp;amp;          # &amp;amp;和;都是行结束符，但&amp;amp;的意思是当前命令放到后台执行">
+  
+    <link rel="alternate" href="/atom.xml" title="Nicky&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-81491830-2', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Nicky&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://nicky-zs.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Bash-pro-programming-Basic" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/01/09/Bash-pro-programming-Basic/" class="article-date">
+  <time datetime="2014-01-09T02:14:38.000Z" itemprop="datePublished">2014-01-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Bash高级编程：基础
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="一、脚本"><a href="#一、脚本" class="headerlink" title="一、脚本"></a>一、脚本</h2><p>Bash脚本由Bash能够解释的命令组成。所有的注释以<code>#</code>开头直到该行结尾：</p>
+<pre><code class="bash">echo abc          # 显示 abc
+echo abc;         # 每一行后面的分号是可选的
+echo a; echo b    # 在这种情况下，第一个命令后的分号不可省
+echo a &amp;          # &amp;和;都是行结束符，但&amp;的意思是当前命令放到后台执行
+echo a &amp;;         # 错误，＆和;只能用一个
+;                 # 错误，跟高级程序语言不同的是，行结束符不是可以随意添加的
+</code></pre>
+<p>使用<code>/bin/bash script.sh</code>命令来运行脚本不需要脚本有可执行权限。使用<code>./script.sh</code>来运行脚本则需要先使用<code>chmod +x</code>来给脚本文件增加执行权限。</p>
+<p>如果脚本文件有执行权限，则脚本第一行以<code>#!</code>开头可以指明该文件运行的解释器的绝对路径，包括<code>/bin/bash</code>, <code>/bin/csh</code>, <code>/bin/awk -F</code>, <code>/usr/bin/python</code>等，甚至也可以是<code>/bin/cat</code>, <code>/bin/rm</code>等。这样的话，当使用<code>./script.sh</code>命令来运行该脚本时，bash会去调用脚本指定的解释器来运行该脚本。</p>
+<a id="more"></a>
+<h2 id="二、变量"><a href="#二、变量" class="headerlink" title="二、变量"></a>二、变量</h2><p>Bash脚本中的变量在使用前无需定义。定义的格式为:</p>
+<pre><code class="bash">name=Value        # = 左边不能有空格，否则会被视为命令 name 的参数
+</code></pre>
+<p>随后可以使用该变量、改变该变量的值，或者删除该变量：</p>
+<pre><code class="bash">echo &quot;${name}&quot;    # 引用变量的标准形式
+echo &quot;$name&quot;      # 在没有歧义的情况下，{}可以省略
+name=abc          # 给变量赋一个新的值
+name=             # 将变量置空，但是变量还存在
+unset name        # 将变量从当前的 shell 中删除
+</code></pre>
+<p>在脚本中定义的变量都是只在当前shell中可见的，对其子shell不可见。若需要变量对子shell可见，则需要将变量导出到环境中：</p>
+<pre><code class="bash">export var1=XXX   # 定义时直接导出
+var2=YYY
+export var2       # 先定义，再单独导出
+command           # 在command中能看见$var1和$var2的值
+</code></pre>
+<p>或者可以使用<code>env</code>来运行<code>command</code>，也能达到上面的效果：</p>
+<pre><code class="bash">env var1=XXX var2=YYY command
+var1=XXX var2=YYY command       # env可以省略
+echo $var1 $var2                # 空；
+                                # 与上面不同，这样不会把var1和var2加入到当前shell中
+</code></pre>
+<h2 id="三、位置参数"><a href="#三、位置参数" class="headerlink" title="三、位置参数"></a>三、位置参数</h2><p>运行脚本的命令行给出的参数可以在脚本中通过位置参数得到。第一个位置参数是<code>$1</code>，第二个是<code>$2</code>，以此类推。若位置参数大于等于10，则必须用<code>${10}</code>来引用。</p>
+<p>脚本名本身不算作位置参数。</p>
+<p>可以使用<code>shift</code>指令让所有的位置参数左移，即<code>$1</code>被删除，<code>$2</code>变为<code>$1</code>，<code>$3</code>变为<code>$2</code>，以此类推。</p>
+<p>可以使用<code>set</code>指令重新设置位置参数：</p>
+<pre><code class="bash">set -- a b c    # $1, $2, $3 依次为 a, b, c
+# -- 表示该命令(set)的选项已经结束，之后以-开头的参数也不解释为选项
+</code></pre>
+<h2 id="四、特殊变量"><a href="#四、特殊变量" class="headerlink" title="四、特殊变量"></a>四、特殊变量</h2><pre><code class="bash">: $*  # 扩展为所有的位置参数的字符串
+: $@  # 扩展为所有的位置参数的列表
+: $#  # 位置参数的数量
+: $0  # 当前脚本的路径
+: $$  # 当前进程的PID
+: $?  # 上一个命令的退出码
+: $_  # 上一个命令的最后一个参数
+: $!  # 上一运行的后台进程的PID
+: $-  # 当前的option flags
+</code></pre>
+<p>遍历脚本的所有参数：</p>
+<pre><code class="bash">for option in &quot;$@&quot;   # or: for option
+do
+    : do something
+done
+</code></pre>
+<h2 id="五、输入输出"><a href="#五、输入输出" class="headerlink" title="五、输入输出"></a>五、输入输出</h2><p><code>echo</code>可用于简单的输出。它依次输出自己的各个参数：</p>
+<pre><code class="bash">echo a    b c      d     # a b c d
+echo &quot;a    b c      d&quot;   # a    b c      d
+echo &quot;-n&quot;                # 没有输出，因为 echo 将 -n 视为它的一个选项
+</code></pre>
+<p><code>printf</code>用于格式化的输出，脚本中应该坚持使用<code>printf</code>：</p>
+<pre><code class="bash">printf &quot;%s\n&quot; a b c &quot;d e&quot;
+</code></pre>
+<p>会打印出：</p>
+<pre><code class="bash">a
+b
+c
+d e
+</code></pre>
+<p>如果格式化参数不够，<code>printf</code>会对剩下的参数重复使用前面的格式化参数。</p>
+<p><code>printf</code>还可以通过<code>-v</code>选项将字符串输出到变量中，即给变量赋值：</p>
+<pre><code class="bash">printf -v num1 &quot;%d&quot; &quot;1&quot;
+printf &quot;%d\n&quot; $num1       # 打印1
+</code></pre>
+<p><code>read</code>用于读取标准输入并将读到的内容赋值给指定的变量：</p>
+<pre><code class="bash">read line         # 默认读取一行的内容赋给line变量，如果不指定变量，则默认存放在 REPLY 变量中
+read a b c rest   # 读取一行，前三个空白分隔的词分别赋给a, b, c，剩下的赋给rest
+read -r line      # 在读取一行的时候保留行内的反斜杠\
+</code></pre>
+<h2 id="六、函数"><a href="#六、函数" class="headerlink" title="六、函数"></a>六、函数</h2><p>符合POSIX标准的函数定义形式为：</p>
+<pre><code class="bash">name() &lt;compound command&gt;
+</code></pre>
+<p>其中，<code>&lt;compound command&gt;</code>是被<code>{}</code>或者<code>()</code>括起来的一连串的命令，或者是被<code>(())</code>或者<code>[[]]</code>包含起来的表达式，甚至也可以是一个块级的<code>case</code>、<code>while</code>等。</p>
+<p>ksh和bash也允许在name()之前再加上<code>function</code>关键字，不过这个关键字也没太大用处。另外，name后面的<code>()</code>永远都是空的，因为函数的调用也就是命令的调用，是依靠位置参数来传参的。</p>
+<p>在函数里使用<code>return &lt;code&gt;</code>来设置一个0到255的退出码，调用者可以通过<code>$?</code>得到。</p>
+<p>函数只是为<code>&lt;compound command&gt;</code>定义一个指代的命令而已，因此，与管道重定向一样，只有当函数体是用<code>()</code>包围时，该函数的调用才会产生子shell，这时，在函数体里定义的任何变量，在当前脚本中都是访问不到的。但如果函数体是用<code>{}</code>包围的，则该函数是在当前shell中被执行，该函数中定义的任何变量在该函数调用完成之后对脚本是可见的。这也是shell函数返回内容的方法（<code>return</code>只设置退出码，不能返回内容）。另外，如果要在<code>{}</code>中定义局部变量，则要使用<code>local</code>关键字：</p>
+<pre><code class="bash">f() {
+    local A B=3 C
+    echo $A $B $C
+}
+</code></pre>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://nicky-zs.github.io/2014/01/09/Bash-pro-programming-Basic/" data-id="cj651tp7m0000zsuyur3l8rj2" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Bash/">Bash</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2014/01/09/Bash-pro-programming-Shell-expansion/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Bash高级编程：命令行扩展
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/01/08/Bash-pro-programming-IO-redirect/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Bash高级编程：IO重定向</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ASM/">ASM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bash/">Bash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Church-Numbers/">Church Numbers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Closure/">Closure</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Erlang/">Erlang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GRASP/">GRASP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTPS/">HTTPS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/High-Throughput/">High Throughput</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JSON/">JSON</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Node-js/">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OOD/">OOD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenSSL/">OpenSSL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PhoneGap/">PhoneGap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scheme/">Scheme</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/">Shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP/">TCP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TLS-SSL/">TLS/SSL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network-bridge/">network bridge</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network-namespace/">network namespace</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/veth/">veth</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wxWidgets/">wxWidgets</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ASM/" style="font-size: 10px;">ASM</a> <a href="/tags/Bash/" style="font-size: 20px;">Bash</a> <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Church-Numbers/" style="font-size: 10px;">Church Numbers</a> <a href="/tags/Closure/" style="font-size: 10px;">Closure</a> <a href="/tags/Erlang/" style="font-size: 15px;">Erlang</a> <a href="/tags/GRASP/" style="font-size: 10px;">GRASP</a> <a href="/tags/Golang/" style="font-size: 10px;">Golang</a> <a href="/tags/HTTPS/" style="font-size: 10px;">HTTPS</a> <a href="/tags/High-Throughput/" style="font-size: 10px;">High Throughput</a> <a href="/tags/JSON/" style="font-size: 10px;">JSON</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="/tags/OOD/" style="font-size: 10px;">OOD</a> <a href="/tags/OpenSSL/" style="font-size: 10px;">OpenSSL</a> <a href="/tags/PhoneGap/" style="font-size: 10px;">PhoneGap</a> <a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/Scheme/" style="font-size: 10px;">Scheme</a> <a href="/tags/Shell/" style="font-size: 10px;">Shell</a> <a href="/tags/TCP/" style="font-size: 10px;">TCP</a> <a href="/tags/TLS-SSL/" style="font-size: 10px;">TLS/SSL</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/network-bridge/" style="font-size: 10px;">network bridge</a> <a href="/tags/network-namespace/" style="font-size: 10px;">network namespace</a> <a href="/tags/veth/" style="font-size: 10px;">veth</a> <a href="/tags/wxWidgets/" style="font-size: 10px;">wxWidgets</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04/">April 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/02/">February 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">January 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2014/06/09/HTTPS-and-OpenSSL/">HTTPS and OpenSSL</a>
+          </li>
+        
+          <li>
+            <a href="/2014/06/09/Format-JSON-with-Python/">Format JSON with Python</a>
+          </li>
+        
+          <li>
+            <a href="/2014/04/09/Implement-Single-Host-Multiple-IPs-on-Linux/">Implement Single-Host-Multiple-IPs on Linux</a>
+          </li>
+        
+          <li>
+            <a href="/2014/04/09/High-Throughput-TCP-Server/">High Throughput TCP Server</a>
+          </li>
+        
+          <li>
+            <a href="/2014/02/09/PhoneGap/">iOS上PhoneGap与平台互操作</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Zhong Sheng<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<!--
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+<script src="//code.jquery.com/jquery-2.2.4.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

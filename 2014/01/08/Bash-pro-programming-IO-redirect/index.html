@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Bash高级编程：IO重定向 | Nicky&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="一、基本重定向：&amp;gt;, &amp;gt;&amp;gt;, &amp;lt;;&amp;gt;用于输出重定向，将一个命令的标准输出1重定向到一个文件路径。如果文件不存在则创建，如果文件存在则truncate。 &amp;gt;&amp;gt;用于输出重定向，将一个命令的标准输出1重定向到一个文件路径。如果文件不存在则创建，如果文件存在则append。  &amp;lt;用于输入重定向，将打开一个文件作为命令的标准输入0。如果文件不存在则报错。 ec">
+<meta name="keywords" content="Bash">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bash高级编程：IO重定向">
+<meta property="og:url" content="https://nicky-zs.github.io/2014/01/08/Bash-pro-programming-IO-redirect/index.html">
+<meta property="og:site_name" content="Nicky&#39;s Blog">
+<meta property="og:description" content="一、基本重定向：&amp;gt;, &amp;gt;&amp;gt;, &amp;lt;;&amp;gt;用于输出重定向，将一个命令的标准输出1重定向到一个文件路径。如果文件不存在则创建，如果文件存在则truncate。 &amp;gt;&amp;gt;用于输出重定向，将一个命令的标准输出1重定向到一个文件路径。如果文件不存在则创建，如果文件存在则append。  &amp;lt;用于输入重定向，将打开一个文件作为命令的标准输入0。如果文件不存在则报错。 ec">
+<meta property="og:updated_time" content="2017-08-09T12:08:03.720Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Bash高级编程：IO重定向">
+<meta name="twitter:description" content="一、基本重定向：&amp;gt;, &amp;gt;&amp;gt;, &amp;lt;;&amp;gt;用于输出重定向，将一个命令的标准输出1重定向到一个文件路径。如果文件不存在则创建，如果文件存在则truncate。 &amp;gt;&amp;gt;用于输出重定向，将一个命令的标准输出1重定向到一个文件路径。如果文件不存在则创建，如果文件存在则append。  &amp;lt;用于输入重定向，将打开一个文件作为命令的标准输入0。如果文件不存在则报错。 ec">
+  
+    <link rel="alternate" href="/atom.xml" title="Nicky&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-81491830-2', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Nicky&#39;s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://nicky-zs.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Bash-pro-programming-IO-redirect" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/01/08/Bash-pro-programming-IO-redirect/" class="article-date">
+  <time datetime="2014-01-08T15:50:00.000Z" itemprop="datePublished">2014-01-08</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Bash高级编程：IO重定向
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="一、基本重定向：-gt-gt-gt-lt"><a href="#一、基本重定向：-gt-gt-gt-lt" class="headerlink" title="一、基本重定向：&gt;, &gt;&gt;, &lt;;"></a>一、基本重定向：<code>&gt;</code>, <code>&gt;&gt;</code>, <code>&lt;</code>;</h2><p><code>&gt;</code>用于输出重定向，将一个命令的标准输出<code>1</code>重定向到一个文件路径。如果文件不存在则创建，如果文件存在则truncate。</p>
+<p><code>&gt;&gt;</code>用于输出重定向，将一个命令的标准输出<code>1</code>重定向到一个文件路径。如果文件不存在则创建，如果文件存在则append。 </p>
+<p><code>&lt;</code>用于输入重定向，将打开一个文件作为命令的标准输入<code>0</code>。如果文件不存在则报错。</p>
+<pre><code class="bash">echo xxxxx &gt; log      # 将 xxxxx 写入到 log 文件中
+cat &lt; log             # 输出 log 文件
+cat &lt; log &gt; log2      # 将 log 写入到 log2 中
+cat &lt; log &gt; log       # 这将清空 log 文件
+                      # 因为重定向在命令运行前由 shell 完成，
+                      # 执行 cat 的时候 log 已被 truncated
+cat &lt; log2 &gt;&gt; log2    # 这句会无限循环，把 log2 的每一行读出来又写到 log2 末尾
+</code></pre>
+<a id="more"></a>
+<p>需要注意的是，如果当前用户不具备对某一文件的写权限时，这种重定向会失败。这种情况经常发生在<code>/proc</code>和<code>/sys</code>目录下，用来绕过<code>sysctl</code>命令直接修改一些参数。比如：</p>
+<pre><code class="bash">echo 3 &gt; /proc/sys/vm/drop_caches    # 清空cache
+</code></pre>
+<p>当以非root用户的身份执行这一句时，bash会提示失败：Permission denied。这时，用<code>sudo</code>来执行此命令：</p>
+<pre><code class="bash">sudo echo 3 &gt; /proc/sys/vm/drop_caches    # 清空cache
+</code></pre>
+<p>结果还是一样：Permission denied。因为这个<code>sudo</code>影响的只是<code>echo</code>命令，这时是以root的身份来运行<code>echo</code>命令。而文件重定向，即打开文件并向文件写入这件事，是bash自己做的，而bash是以当前用户的身份运行的，所以其实是bash自身没有这个权限。因此，可以通过<code>su</code>或者<code>sudo bash</code>切换到root的bash下来解决这个问题，或者通过使用<code>tee</code>命令来解决这个问题。</p>
+<p>另外，当noclobber设置为enable时，若file已存在则<code>&gt; file</code>会失败，但是<code>&gt;| file</code>仍然成功。</p>
+<h2 id="二、指定fd的重定向：n-gt-gt-amp-n-gt-amp"><a href="#二、指定fd的重定向：n-gt-gt-amp-n-gt-amp" class="headerlink" title="二、指定fd的重定向：n&gt;, &gt;&amp;, n&gt;&amp;"></a>二、指定fd的重定向：<code>n&gt;</code>, <code>&gt;&amp;</code>, <code>n&gt;&amp;</code></h2><p><code>a&gt;&amp;b</code>语法用于将fd “a”重定向到fd “b”（”a”默认为1）。最常见的用法是用于重定向错误输出：</p>
+<pre><code class="bash">command &gt;log 2&gt;&amp;1           # 将 command 的标准输出和错误输出都重定向到文件 log 中
+</code></pre>
+<p>这里<code>&gt;log</code>和<code>2&gt;&amp;1</code>的顺序不能变，因为shell将从左向右来解释这一行命令。同时，<code>2&gt;&amp;</code>中也不能有任何空格。</p>
+<p><code>a&gt;file</code>语法用于将fd “a”重定向到文件file中：</p>
+<pre><code class="bash">command &gt;log 2&gt;/dev/null    # 将 command 的标准输出重定向到文件 log 中，丢弃错误输出
+</code></pre>
+<h2 id="三、命令组重定向"><a href="#三、命令组重定向" class="headerlink" title="三、命令组重定向"></a>三、命令组重定向</h2><p>要将一组命令进行重定向可以用<code>{}</code>或者<code>()</code>来包围命令，<code>()</code>的会启动子shell来执行这组命令，而<code>{}</code>会在当前shell中执行这组命令。</p>
+<p>另外，它们的语法也有一些细微差别：</p>
+<pre><code class="bash">{ echo a; echo b; echo c;} &gt; log
+(head -n1; head -n1; head -n1) &lt; log
+</code></pre>
+<h2 id="四、管道重定向：command1-command2"><a href="#四、管道重定向：command1-command2" class="headerlink" title="四、管道重定向：command1 | command2"></a>四、管道重定向：<code>command1 | command2</code></h2><p><code>command1 | command2</code>语法用于创建一个管道，连接<code>command1</code>的标准输出和<code>command2</code>的标准输入：</p>
+<pre><code class="bash">printf &quot;xxxxxxxxxxxx&quot; | tee log
+</code></pre>
+<p><code>|</code>后面的命令运行于子shell中，而非当前shell中。</p>
+<p>由于利用管理重写向执行的进程可以使用<code>sudo</code>，因此可以解决前面提到的重定向到文件时的权限问题：</p>
+<pre><code class="bash">echo 3 | sudo tee /proc/sys/vm/drop_caches   # 清空cache
+</code></pre>
+<h2 id="五、使用进程扩展：-lt-gt"><a href="#五、使用进程扩展：-lt-gt" class="headerlink" title="五、使用进程扩展：&lt;(), &gt;()"></a>五、使用进程扩展：<code>&lt;()</code>, <code>&gt;()</code></h2><p>在任何需要一个输入文件名的时候，可以使用<code>&lt;(command)</code>来表示一个文件，从该文件的读取会重定向为<code>command</code>的标准输出。</p>
+<p>在任何需要一个输出文件名的时候，可以使用<code>&gt;(command)</code>来表示一个文件，向该文件的写入会重定向为<code>command</code>的标准输入。</p>
+<pre><code class="bash">diff &lt;(command1) &lt;(command2)
+</code></pre>
+<h2 id="六、使用coproc"><a href="#六、使用coproc" class="headerlink" title="六、使用coproc"></a>六、使用coproc</h2><p>coproc是bash提供的一个异步协程机制，用于异步执行一个/一组命令，并创建重定向管道：</p>
+<pre><code class="bash">coproc _cat { cat; }      # 启动协程，_cat数组代表IO管道，如果没有指定名字，则默认为COPROC
+echo abc &gt;&amp; ${_cat[1]}    # 向协程的管道写入
+cat &lt;&amp; ${_cat[0]}         # 从协程的管道读出
+</code></pre>
+<p>coproc基本上相当于一个匿名管道。它的一个限制是同时只能有一个协程存在，如果有多个异步任务的话，还是只能用命名管道来做重定向。</p>
+<p>一个简单的例子，使用coproc将<code>curl</code>一个网站时返回的cookies保存并留作后面使用，从而避免显示使用一个临时文件：</p>
+<pre><code class="bash">#!/bin/bash
+
+EOF=$(date | shasum)
+EOF=${EOF%% *}
+URL=&quot;http://www.baidu.com/&quot;
+
+coproc PIPE {
+    while read -r line
+    do
+        [ &quot;$line&quot; = &quot;$EOF&quot; ] &amp;&amp; break   # 否则读端在读完所有数据后还会一直阻塞在读上
+        echo $line
+    done
+}
+
+curl -c &gt;(cat &gt;&amp; ${PIPE[1]}) &quot;$URL&quot; &gt; /dev/null 2&gt;&amp;1
+echo $EOF &gt;&amp; ${PIPE[1]}
+
+echo &quot;Cookies received:&quot;
+cat &lt;&amp; ${PIPE[0]}
+echo
+</code></pre>
+<h2 id="七、使用命名管道"><a href="#七、使用命名管道" class="headerlink" title="七、使用命名管道"></a>七、使用命名管道</h2><p><code>mkfifo</code>用于创建命名管道，要在shell中异步执行命令时此机制很有用：</p>
+<pre><code class="bash">filename=/tmp/f$RANDOM
+mkfifo $filename         # 创建命名管道
+command &gt; $filename &amp;    # 异步执行 command 并将结果输出至该命名管道
+cat $filename            # 获取 command 的结果
+rm -f $filename
+</code></pre>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://nicky-zs.github.io/2014/01/08/Bash-pro-programming-IO-redirect/" data-id="cj651tp7y0003zsuylh9uemn7" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Bash/">Bash</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2014/01/09/Bash-pro-programming-Basic/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Bash高级编程：基础
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ASM/">ASM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bash/">Bash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Church-Numbers/">Church Numbers</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Closure/">Closure</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Erlang/">Erlang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GRASP/">GRASP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTPS/">HTTPS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/High-Throughput/">High Throughput</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JSON/">JSON</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Node-js/">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OOD/">OOD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenSSL/">OpenSSL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PhoneGap/">PhoneGap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scheme/">Scheme</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/">Shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TCP/">TCP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TLS-SSL/">TLS/SSL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network-bridge/">network bridge</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network-namespace/">network namespace</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/veth/">veth</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wxWidgets/">wxWidgets</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ASM/" style="font-size: 10px;">ASM</a> <a href="/tags/Bash/" style="font-size: 20px;">Bash</a> <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Church-Numbers/" style="font-size: 10px;">Church Numbers</a> <a href="/tags/Closure/" style="font-size: 10px;">Closure</a> <a href="/tags/Erlang/" style="font-size: 15px;">Erlang</a> <a href="/tags/GRASP/" style="font-size: 10px;">GRASP</a> <a href="/tags/Golang/" style="font-size: 10px;">Golang</a> <a href="/tags/HTTPS/" style="font-size: 10px;">HTTPS</a> <a href="/tags/High-Throughput/" style="font-size: 10px;">High Throughput</a> <a href="/tags/JSON/" style="font-size: 10px;">JSON</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="/tags/OOD/" style="font-size: 10px;">OOD</a> <a href="/tags/OpenSSL/" style="font-size: 10px;">OpenSSL</a> <a href="/tags/PhoneGap/" style="font-size: 10px;">PhoneGap</a> <a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/Scheme/" style="font-size: 10px;">Scheme</a> <a href="/tags/Shell/" style="font-size: 10px;">Shell</a> <a href="/tags/TCP/" style="font-size: 10px;">TCP</a> <a href="/tags/TLS-SSL/" style="font-size: 10px;">TLS/SSL</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/network-bridge/" style="font-size: 10px;">network bridge</a> <a href="/tags/network-namespace/" style="font-size: 10px;">network namespace</a> <a href="/tags/veth/" style="font-size: 10px;">veth</a> <a href="/tags/wxWidgets/" style="font-size: 10px;">wxWidgets</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04/">April 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/02/">February 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">January 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2014/06/09/HTTPS-and-OpenSSL/">HTTPS and OpenSSL</a>
+          </li>
+        
+          <li>
+            <a href="/2014/06/09/Format-JSON-with-Python/">Format JSON with Python</a>
+          </li>
+        
+          <li>
+            <a href="/2014/04/09/Implement-Single-Host-Multiple-IPs-on-Linux/">Implement Single-Host-Multiple-IPs on Linux</a>
+          </li>
+        
+          <li>
+            <a href="/2014/04/09/High-Throughput-TCP-Server/">High Throughput TCP Server</a>
+          </li>
+        
+          <li>
+            <a href="/2014/02/09/PhoneGap/">iOS上PhoneGap与平台互操作</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Zhong Sheng<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<!--
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+<script src="//code.jquery.com/jquery-2.2.4.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
