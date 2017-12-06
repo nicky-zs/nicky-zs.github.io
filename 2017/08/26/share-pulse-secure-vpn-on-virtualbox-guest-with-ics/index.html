@@ -3,14 +3,19 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Tag: Closure | Nicky&#39;s Blog</title>
+  <title>通过ICS分享VirtualBox虚拟机上的Pulse Secure VPN网络 | Nicky&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Nicky&#39;s Blog">
-<meta property="og:url" content="https://nicky-zs.github.io/tags/Closure/index.html">
+  <meta name="description" content="我们公司的VPN用的是Pulse Secure + MOTP（一种动态口令验证）。目前只有在Windows系统和MacOS系统中才能连接成功；在Linux系统上，由于MOTP的存在，Pulse Secure总是连接不上。还好，平时为了使用只有Windows下才有的一些软件，我的Linux上一直都有VirtualBox的Win7虚拟机。折腾好久之后，最后终于摸索出一种基于VirtualBox的Win">
+<meta name="keywords" content="ICS,NAT,VirtualBox,Pulse Secure,VPN">
+<meta property="og:type" content="article">
+<meta property="og:title" content="通过ICS分享VirtualBox虚拟机上的Pulse Secure VPN网络">
+<meta property="og:url" content="https://nicky-zs.github.io/2017/08/26/share-pulse-secure-vpn-on-virtualbox-guest-with-ics/index.html">
 <meta property="og:site_name" content="Nicky&#39;s Blog">
+<meta property="og:description" content="我们公司的VPN用的是Pulse Secure + MOTP（一种动态口令验证）。目前只有在Windows系统和MacOS系统中才能连接成功；在Linux系统上，由于MOTP的存在，Pulse Secure总是连接不上。还好，平时为了使用只有Windows下才有的一些软件，我的Linux上一直都有VirtualBox的Win7虚拟机。折腾好久之后，最后终于摸索出一种基于VirtualBox的Win">
+<meta property="og:updated_time" content="2017-12-06T09:47:57.347Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Nicky&#39;s Blog">
+<meta name="twitter:title" content="通过ICS分享VirtualBox虚拟机上的Pulse Secure VPN网络">
+<meta name="twitter:description" content="我们公司的VPN用的是Pulse Secure + MOTP（一种动态口令验证）。目前只有在Windows系统和MacOS系统中才能连接成功；在Linux系统上，由于MOTP的存在，Pulse Secure总是连接不上。还好，平时为了使用只有Windows下才有的一些软件，我的Linux上一直都有VirtualBox的Win7虚拟机。折腾好久之后，最后终于摸索出一种基于VirtualBox的Win">
   
     <link rel="alternate" href="/atom.xml" title="Nicky&#39;s Blog" type="application/atom+xml">
   
@@ -70,40 +75,85 @@ ga('send', 'pageview');
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2014" class="archive-year">2014</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2014/01/09/Variable-Scope-Within-Function-Closures/" class="archive-article-date">
-  <time datetime="2014-01-09T11:47:56.000Z" itemprop="datePublished">Jan 9</time>
+        <section id="main"><article id="post-share-pulse-secure-vpn-on-virtualbox-guest-with-ics" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/08/26/share-pulse-secure-vpn-on-virtualbox-guest-with-ics/" class="article-date">
+  <time datetime="2017-08-26T01:01:43.000Z" itemprop="datePublished">2017-08-26</time>
 </a>
-      
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2014/01/09/Variable-Scope-Within-Function-Closures/">闭包作用域与调用环境问题</a>
+    <h1 class="article-title" itemprop="name">
+      通过ICS分享VirtualBox虚拟机上的Pulse Secure VPN网络
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>我们公司的VPN用的是Pulse Secure + MOTP（一种动态口令验证）。目前只有在Windows系统和MacOS系统中才能连接成功；在Linux系统上，由于MOTP的存在，Pulse Secure总是连接不上。还好，平时为了使用只有Windows下才有的一些软件，我的Linux上一直都有VirtualBox的Win7虚拟机。折腾好久之后，最后终于摸索出一种基于VirtualBox的Win7虚拟机连接的VPN的方法：通过VirtualBox Win7虚拟机来进行Pulse Secure VPN的连接，再通过ICS将VPN连接共享给Linux系统使用。</p>
+<a id="more"></a>
+<p>步骤记录如下：</p>
+<ol>
+<li>在Linux上安装VirtualBox，并在VirtualBox中安装一个Windows系统（在我的系统上，这个VirtualBox Guest是32位的Win7，以下简称Win7）。</li>
+<li>在VirtualBox中设置给Win7添加两块网卡，<code>网卡1</code>和<code>网卡2</code>，其中：<ul>
+<li><code>网卡1</code>将用于访问外网，没有外网则无法建立VPN连接。这块网卡可以使用NAT、NAT Network、Bridged Adapter。</li>
+<li><code>网卡2</code>将用作共享上网的网关。这块网卡可以使用Host-Only Network、Bridged Adapter。<br>推荐将<code>网卡1</code>设置为Bridged Adapter或NAT（如果宿主机所在的网络环境无法进行网卡桥接或虚拟机不需要与宿主机同网段的IP），将<code>网卡2</code>设置为Host-Only Network：192.168.137.254/24，并开启DHCP，DHCP服务器192.168.137.100，DHCP地址池从192.168.137.101到192.168.137.199。</li>
+</ul>
+</li>
+<li>在Win7上安装并配置好Pulse Secure客户端，并连接到VPN。连接到VPN之后，Win7会出现第3个网络适配器：<code>Pulse Secure</code>。</li>
+<li>在Pulse Secure上右键–&gt;属性–&gt;共享，勾选“允许其他网络用户通过此计算机的Internet连接来连接”，并在下面的网络连接列表中选择<code>网卡2</code>，然后确定。这时，<code>网卡2</code>的IP会从原来的使用DHCP自动获得变成一个固定IP：192.168.137.1/24（默认是这个IP，可以在注册表里修改）。</li>
+<li>这时，192.168.137.1已经成为了一个NAT网关可以使用了。若第2步中，<code>网卡2</code>使用Bridged Adapter模式，则在Linux上，将IP 192.168.137.2/24绑在网卡上，然后设置公司网段的路由10.0.0.0/8指向192.168.137.1，DNS服务器为192.168.137.1就OK了。若第2步中，<code>网卡2</code>使用的是推荐的Host-Only Network模式且使用推荐的IP配置，则宿主机上已经有一个IF绑定了192.168.137.254/24，直接修改路由增加10.0.0.0/8 via 192.168.137.1即可。</li>
+</ol>
+<pre><code class="bash">sudo ip a add 192.168.137.2/24 dev wlp3s0
+sudo ip r add 10.0.0.0/8 via 192.168.137.1
+echo &#39;nameserver 192.168.137.1&#39; | sudo tee /etc/resolve.conf
+</code></pre>
+<p>有几个地方需要<strong>注意</strong>一下：</p>
+<ul>
+<li>步骤4我原以为是一劳永逸的，后来发现每次在Win7上连接完VPN之后，都要重新把4中的设置取消了，然后再来一遍，不然就不生效。其实应该在每次结束VPN连接之前，先结束掉<code>Pulse Secure</code>网卡的共享。</li>
+<li>步骤5中的<code>dev wlp3s0</code>是网卡设备名，不同的系统上不一样。如果使用推荐设置，则会有一个默认叫<code>vboxnet0</code>的设备已经绑好了合适的IP。</li>
+<li>步骤5中路由的网段10.0.0.0/8根据不同的公司情况不一样，也有公司会用到192.168.0.0/16网段，要注意不要与自己家用路由器的路由产生冲突了。</li>
+</ul>
+<hr>
 
+<p># TODO     // 程序员最大谎言之一</p>
+<ol>
+<li>除了ICS，还可以在Win7上安装socks代理，让Linux通过Win7暴露的socks代理来访问VPN。通过shadowsocks-redir的方式，然后Linux上配iptables来实现。</li>
+<li>貌似有个叫redsocks的东西可以研究一下。</li>
+<li>有空再记录下通过iptables把Linux主机变成NAT网关的方法。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://nicky-zs.github.io/2017/08/26/share-pulse-secure-vpn-on-virtualbox-guest-with-ics/" data-id="cjav2zdx0000tt2uyyxti27c4" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ICS/">ICS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NAT/">NAT</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Pulse-Secure/">Pulse Secure</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/VPN/">VPN</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/VirtualBox/">VirtualBox</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2014/06/09/HTTPS-and-OpenSSL/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">HTTPS and OpenSSL</div>
+    </a>
+  
+</nav>
+
+  
+</article>
 
 </section>
         
